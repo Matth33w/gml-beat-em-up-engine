@@ -1,0 +1,27 @@
+{
+  "FolderOrderSettings": [
+    {"name":"audio","order":14,"path":"folders/audio.yy",},
+    {"name":"sounds","order":1,"path":"folders/audio/sounds.yy",},
+    {"name":"objects","order":12,"path":"folders/objects.yy",},
+    {"name":"screens","order":10,"path":"folders/screens.yy",},
+    {"name":"scripts","order":13,"path":"folders/scripts.yy",},
+    {"name":"sprites","order":11,"path":"folders/sprites.yy",},
+    {"name":"el_gado","order":3,"path":"folders/sprites/el_gado.yy",},
+    {"name":"engine","order":2,"path":"folders/sprites/engine.yy",},
+    {"name":"mai_shiranui","order":1,"path":"folders/sprites/mai_shiranui.yy",},
+  ],
+  "ResourceOrderSettings": [
+    {"name":"spr_mai_hurt","order":6,"path":"sprites/spr_mai_hurt/spr_mai_hurt.yy",},
+    {"name":"spr_mai_medium_punch","order":3,"path":"sprites/spr_mai_medium_punch/spr_mai_medium_punch.yy",},
+    {"name":"spr_mai_jump","order":5,"path":"sprites/spr_mai_jump/spr_mai_jump.yy",},
+    {"name":"obj_entity_sprite","order":1,"path":"objects/obj_entity_sprite/obj_entity_sprite.yy",},
+    {"name":"spr_mai_strong_punch","order":4,"path":"sprites/spr_mai_strong_punch/spr_mai_strong_punch.yy",},
+    {"name":"spr_mai_walk","order":1,"path":"sprites/spr_mai_walk/spr_mai_walk.yy",},
+    {"name":"freeze_jump_animation_on_end","order":1,"path":"scripts/freeze_jump_animation_on_end/freeze_jump_animation_on_end.yy",},
+    {"name":"spr_mai_light_punch","order":2,"path":"sprites/spr_mai_light_punch/spr_mai_light_punch.yy",},
+    {"name":"stage_handler","order":2,"path":"objects/stage_handler/stage_handler.yy",},
+    {"name":"snd_big_woosh","order":1,"path":"sounds/snd_big_woosh/snd_big_woosh.yy",},
+    {"name":"snd_hit","order":2,"path":"sounds/snd_hit/snd_hit.yy",},
+    {"name":"ground_group","order":3,"path":"objects/ground_group/ground_group.yy",},
+  ],
+}
