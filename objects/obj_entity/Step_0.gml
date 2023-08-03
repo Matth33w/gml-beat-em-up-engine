@@ -14,7 +14,8 @@ if(!global.pause && !dead) {
 					if(!jumping && !attacking && global.p1_jump) {
 						jumping = true;
 						y_speed = -7;
-						entity_sprite.image_index = 0
+						entity_sprite.image_index = 0;
+						audio_play_sound(snd_big_woosh, 1, false);
 					}
 					
 					if(!jumping && global.p1_punch && !attacking && attack_id == 0) {
@@ -23,6 +24,7 @@ if(!global.pause && !dead) {
 						attacking = true;
 						entity_sprite.image_index = 0;
 						audio_play_sound(snd_woosh, 1, false);
+						character_attack_attributes_handler(char_id, attack_id);
 					}
 					
 					if(!jumping && global.p1_kick && !attacking && attack_id == 0) {
@@ -31,6 +33,7 @@ if(!global.pause && !dead) {
 						attacking = true;
 						entity_sprite.image_index = 0;
 						audio_play_sound(snd_woosh, 1, false);
+						character_attack_attributes_handler(char_id, attack_id);
 					}
 				}
 				
@@ -51,6 +54,7 @@ if(!global.pause && !dead) {
 						jumping = true;
 						y_speed = -7;
 						entity_sprite.image_index = 0;
+						audio_play_sound(snd_big_woosh, 1, false);
 					}
 					
 					if(!jumping && global.p2_punch && !attacking && attack_id == 0) {
@@ -59,6 +63,7 @@ if(!global.pause && !dead) {
 						attacking = true;
 						entity_sprite.image_index = 0;
 						audio_play_sound(snd_woosh, 1, false);
+						character_attack_attributes_handler(char_id, attack_id);
 					}
 					
 					if(!jumping && global.p2_kick && !attacking && attack_id == 0) {
@@ -67,6 +72,7 @@ if(!global.pause && !dead) {
 						attacking = true;
 						entity_sprite.image_index = 0;
 						audio_play_sound(snd_woosh, 1, false);
+						character_attack_attributes_handler(char_id, attack_id);
 					}
 				}
 				
@@ -110,15 +116,13 @@ if(!global.pause && !dead) {
 				var _horizontal_direction_to_p1 = _horizontal_direction_to_p1;
 				var _vertical_direction_to_p1 = _vertical_direction_to_p1;
 				
-				if(!damaged) {
-					_horizontal_direction_to_p1 = sign(x - _p1.x);
-					_vertical_direction_to_p1 = sign(y - _p1.y);
+				_horizontal_direction_to_p1 = sign(x - _p1.x);
+				_vertical_direction_to_p1 = sign(y - _p1.y);
 					
-					_horizontal_direction_to_p1 = _horizontal_direction_to_p1 != 0 ? _horizontal_direction_to_p1 : 1;
-					_vertical_direction_to_p1 = _vertical_direction_to_p1 != 0 ? _vertical_direction_to_p1 : 1;
-				}
+				_horizontal_direction_to_p1 = _horizontal_direction_to_p1 != 0 ? _horizontal_direction_to_p1 : 1;
+				_vertical_direction_to_p1 = _vertical_direction_to_p1 != 0 ? _vertical_direction_to_p1 : 1;
 				
-				last_horizontal_direction = -_horizontal_direction_to_p1;
+				last_horizontal_direction = _horizontal_direction_to_p1 != noone ? -_horizontal_direction_to_p1 : 1;
 				
 				if(_horizontal_direction_to_p1 == -1 && x < _p1.x - 52)
 					current_x = 1;
@@ -141,15 +145,13 @@ if(!global.pause && !dead) {
 				var _horizontal_direction_to_p2 = _horizontal_direction_to_p2;
 				var _vertical_direction_to_p2 = _vertical_direction_to_p2;
 				
-				if(!damaged) {
-					_horizontal_direction_to_p2 = sign(x - _p2.x);
-					_vertical_direction_to_p2 = sign(y - _p2.y);
+				_horizontal_direction_to_p2 = sign(x - _p2.x);
+				_vertical_direction_to_p2 = sign(y - _p2.y);
 				
-					_horizontal_direction_to_p2 = _horizontal_direction_to_p2 != 0 ? _horizontal_direction_to_p2 : 1;
-					_vertical_direction_to_p2 = _vertical_direction_to_p2 != 0 ? _vertical_direction_to_p2 : 1;
-				}
+				_horizontal_direction_to_p2 = _horizontal_direction_to_p2 != 0 ? _horizontal_direction_to_p2 : 1;
+				_vertical_direction_to_p2 = _vertical_direction_to_p2 != 0 ? _vertical_direction_to_p2 : 1;
 				
-				last_horizontal_direction = -_horizontal_direction_to_p2;
+				last_horizontal_direction = _horizontal_direction_to_p2 ? -_horizontal_direction_to_p2 : 1;
 				
 				if(_horizontal_direction_to_p2 == -1 && x < _p2.x - 52)
 					current_x = 1;
@@ -172,6 +174,10 @@ if(!global.pause && !dead) {
 		current_x = current_x * entity_speed;
 		current_y = current_y * entity_speed / 1.35;
 		
+		/////////////////////////
+		// BOT ATTACK HANDLING //
+		/////////////////////////
+		
 		if(!moving) {
 			if(attack_id == 0 && !damaged && !attacking)
 				bot_attack_timeout += 1;
@@ -184,6 +190,8 @@ if(!global.pause && !dead) {
 				can_move = false;
 				attack_id = 1;
 				audio_play_sound(snd_woosh, 1, false);
+				
+				character_attack_attributes_handler(char_id, attack_id);
 			}
 		} else {
 			bot_attack_timeout = 0;
@@ -197,9 +205,42 @@ if(!global.pause && !dead) {
 							entity_sprite.image_index = 0;
 							attack_id = 2;
 							bot_attack_timeout = 0;
+							character_attack_attributes_handler(char_id, attack_id);
 						
 							audio_play_sound(snd_woosh, 1, false);
-							bot_will_continue_combo = irandom_range(0, 1);
+							bot_will_continue_combo = irandom_range(1, 1);
+						}
+						break;
+					}
+					
+					case 2: {						
+						if(attacking && bot_will_continue_combo && entity_sprite.image_index > entity_sprite.image_number - 2) {
+							entity_sprite.image_index = 0;
+							attack_id = 3;
+							bot_attack_timeout = 0;
+							character_attack_attributes_handler(char_id, attack_id);
+						
+							audio_play_sound(snd_big_woosh, 1, false);
+							bot_will_continue_combo = irandom_range(0, 0);
+						}
+						break;
+					}
+				}
+					
+				break;
+			}
+			
+			case 1: {
+				switch(attack_id) {
+					case 1: {						
+						if(attacking && bot_will_continue_combo && entity_sprite.image_index > entity_sprite.image_number - 2) {
+							entity_sprite.image_index = 0;
+							attack_id = 2;
+							bot_attack_timeout = 0;
+							character_attack_attributes_handler(char_id, attack_id);
+						
+							audio_play_sound(snd_woosh, 1, false);
+							bot_will_continue_combo = irandom_range(1, 1);
 						}
 						break;
 					}
@@ -241,25 +282,6 @@ if(!global.pause && !dead) {
 		entity_sprite.image_index = 0;
 	}
 	
-	if(attacking) {
-		var _entity = instance_place(x, y, obj_entity);
-		
-		if(_entity && entity_sprite.image_index < entity_sprite.image_number - 2) {
-			if((!_entity.damaged || _entity.last_damaged != attack_id) && _entity.x > x && last_horizontal_direction == 1 || (!_entity.damaged || _entity.last_damaged != attack_id) && _entity.x < x && last_horizontal_direction == -1) {
-				_entity.damaged = true;
-				_entity.entity_sprite.image_index = 0;
-				_entity.entity_sprite.image_speed = 1;
-				_entity.can_move = false;
-				_entity.damaged_timeout = entity_damage_timeout;
-				_entity.entity_health -= entity_damage;
-				_entity.last_damaged = attack_id;
-				_entity.last_horizontal_direction = (x > _entity.x) ? 1 : -1;
-				_entity.bot_attack_timeout = 0;
-				audio_play_sound(snd_hit, 1, false);
-			}
-		}
-	}
-	
 	if(!jumping) {
 		if(x != last_x || y != last_y) {
 			moving = true;
@@ -276,6 +298,7 @@ if(!global.pause && !dead) {
 			y_height = 0;
 			entity_sprite.image_index = 0;
 			entity_sprite.image_speed = 1;
+			audio_play_sound(snd_step, 1, false);
 		}
 	}
 	
@@ -293,6 +316,46 @@ if(!global.pause && !dead) {
 			last_damaged = 0;
 			entity_sprite.image_speed = 1;
 			entity_sprite.image_index = 0;
+		}
+	}
+	
+	if(entity_health <= 0) {
+		dead = true;
+		y_speed = -10;
+	} 
+}
+
+if(dead && !global.pause) {
+	if(!dead_on_ground) {
+		y_height -= y_speed;
+		y_speed += 0.6;
+		current_x = 2 * -last_horizontal_direction;
+		x += current_x;
+	}
+		
+	if(y_height <= 0 && !dead_on_ground) {
+		if(death_bounces > 0) {
+			death_bounces--;
+			y_speed = -6;
+			y_height = 0;
+			audio_play_sound(snd_step, 1, false);
+			entity_sprite.image_index = 0;
+			entity_sprite.image_speed = 1;
+		} else {
+			dead_on_ground = true;
+			y_speed = 0;
+			y_height = 0;
+			entity_sprite.image_index = 0;
+			entity_sprite.image_speed = 1;
+			audio_play_sound(snd_step, 1, false);
+		}
+	}
+	
+	if(dead_on_ground) {
+		dead_timeout += delta_time / 1000000;
+		if(dead_timeout > 3 && !player_controlled) {
+			instance_destroy(entity_sprite);
+			instance_destroy();
 		}
 	}
 }
