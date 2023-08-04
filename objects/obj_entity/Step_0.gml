@@ -1,84 +1,6 @@
 if(!global.pause && !dead) {
 	if(player_controlled) {
-		switch(player_controller_id) {
-			case 1: {
-				if(can_move && !dead) {
-					current_x = global.p1_horizontal;
-					current_y = global.p1_vertical;
-				
-					if(!damaged) {
-						last_horizontal_direction = global.p1_horizontal != 0 ? global.p1_horizontal : last_horizontal_direction;
-						last_vertical_direction = global.p1_vertical != 0 ? global.p1_vertical : last_vertical_direction;
-					}
-					
-					if(!jumping && !attacking && global.p1_jump) {
-						jumping = true;
-						y_speed = -7;
-						entity_sprite.image_index = 0;
-						audio_play_sound(snd_big_woosh, 1, false);
-					}
-					
-					if(!jumping && global.p1_punch && !attacking && attack_id == 0) {
-						attack_id = 1;
-						can_move = false;
-						attacking = true;
-						entity_sprite.image_index = 0;
-						audio_play_sound(snd_woosh, 1, false);
-						character_attack_attributes_handler(char_id, attack_id);
-					}
-					
-					if(!jumping && global.p1_kick && !attacking && attack_id == 0) {
-						attack_id = 4;
-						can_move = false;
-						attacking = true;
-						entity_sprite.image_index = 0;
-						audio_play_sound(snd_woosh, 1, false);
-						character_attack_attributes_handler(char_id, attack_id);
-					}
-				}
-				
-				break;
-			}
-			
-			case 2: {
-				if(can_move && !dead) {
-					current_x = global.p2_horizontal;
-					current_y = global.p2_vertical;
-				
-					if(!damaged) {
-						last_horizontal_direction = global.p2_horizontal != 0 ? global.p2_horizontal : last_horizontal_direction;
-						last_vertical_direction = global.p2_vertical != 0 ? global.p2_vertical : last_vertical_direction;
-					}
-					
-					if(!jumping && global.p2_jump) {
-						jumping = true;
-						y_speed = -7;
-						entity_sprite.image_index = 0;
-						audio_play_sound(snd_big_woosh, 1, false);
-					}
-					
-					if(!jumping && global.p2_punch && !attacking && attack_id == 0) {
-						attack_id = 1;
-						can_move = false;
-						attacking = true;
-						entity_sprite.image_index = 0;
-						audio_play_sound(snd_woosh, 1, false);
-						character_attack_attributes_handler(char_id, attack_id);
-					}
-					
-					if(!jumping && global.p2_kick && !attacking && attack_id == 0) {
-						attack_id = 4;
-						can_move = false;
-						attacking = true;
-						entity_sprite.image_index = 0;
-						audio_play_sound(snd_woosh, 1, false);
-						character_attack_attributes_handler(char_id, attack_id);
-					}
-				}
-				
-				break;
-			}
-		}
+		basic_player_control();
 		
 		current_x = current_x * entity_speed;
 		current_y = current_y * entity_speed / 1.35;
@@ -91,85 +13,12 @@ if(!global.pause && !dead) {
 		var _distance_from_p1 = -1;
 		var _distance_from_p2 = -1;
 		
-		if(_p1)
-			_distance_from_p1 = abs(x - _p1.x);
-			
-		if(_p2)
-			_distance_from_p2 = abs(x - _p2.x);
-			
-		if(_distance_from_p1 > -1 && _distance_from_p2 > 1) {
-			if(_distance_from_p1 < _distance_from_p2) {
-				current_player_focus = 1;
-			} else if (_distance_from_p2 < _distance_from_p1) {
-				current_player_focus = 2;
-			}
-		} else {
-			if(_distance_from_p1 > -1)
-				current_player_focus = 1;
-				
-			if(_distance_from_p2 > -1)
-				current_player_focus = 2;
+		if(current_focus_timeout > 5 || current_player_focus == 0) {
+			current_focus_timeout = 0;
+			bot_focus_handler(_p1, _p2, _distance_from_p1, _distance_from_p2, irandom_range(0, 1));
 		}
 		
-		switch(current_player_focus) {
-			case 1: {
-				var _horizontal_direction_to_p1 = _horizontal_direction_to_p1;
-				var _vertical_direction_to_p1 = _vertical_direction_to_p1;
-				
-				_horizontal_direction_to_p1 = sign(x - _p1.x);
-				_vertical_direction_to_p1 = sign(y - _p1.y);
-					
-				_horizontal_direction_to_p1 = _horizontal_direction_to_p1 != 0 ? _horizontal_direction_to_p1 : 1;
-				_vertical_direction_to_p1 = _vertical_direction_to_p1 != 0 ? _vertical_direction_to_p1 : 1;
-				
-				last_horizontal_direction = _horizontal_direction_to_p1 != noone ? -_horizontal_direction_to_p1 : 1;
-				
-				if(_horizontal_direction_to_p1 == -1 && x < _p1.x - 52)
-					current_x = 1;
-				else if(_horizontal_direction_to_p1 == 1 && x > _p1.x + 52)
-					current_x = -1;
-				else
-					current_x = 0;
-					
-				if(_vertical_direction_to_p1 == -1 && y < _p1.y - 6)
-					current_y = 1;
-				else if(_vertical_direction_to_p1 == 1 && y > _p1.y + 6)
-					current_y = -1;
-				else
-					current_y = 0;
-				
-				break;
-			}
-			
-			case 2: {
-				var _horizontal_direction_to_p2 = _horizontal_direction_to_p2;
-				var _vertical_direction_to_p2 = _vertical_direction_to_p2;
-				
-				_horizontal_direction_to_p2 = sign(x - _p2.x);
-				_vertical_direction_to_p2 = sign(y - _p2.y);
-				
-				_horizontal_direction_to_p2 = _horizontal_direction_to_p2 != 0 ? _horizontal_direction_to_p2 : 1;
-				_vertical_direction_to_p2 = _vertical_direction_to_p2 != 0 ? _vertical_direction_to_p2 : 1;
-				
-				last_horizontal_direction = _horizontal_direction_to_p2 ? -_horizontal_direction_to_p2 : 1;
-				
-				if(_horizontal_direction_to_p2 == -1 && x < _p2.x - 52)
-					current_x = 1;
-				else if(_horizontal_direction_to_p2 == 1 && x > _p2.x + 52)
-					current_x = -1;
-				else
-					current_x = 0;
-					
-				if(_vertical_direction_to_p2 == -1 && y < _p2.y - 6)
-					current_y = 1;
-				else if(_vertical_direction_to_p2 == 1 && y > _p2.y + 6)
-					current_y = -1;
-				else
-					current_y = 0;
-					
-				break;
-			}
-		}
+		bot_movement_handler(_p1, _p2);
 		
 		current_x = current_x * entity_speed;
 		current_y = current_y * entity_speed / 1.35;
@@ -178,77 +27,8 @@ if(!global.pause && !dead) {
 		// BOT ATTACK HANDLING //
 		/////////////////////////
 		
-		if(!moving) {
-			if(attack_id == 0 && !damaged && !attacking)
-				bot_attack_timeout += 1;
-			
-			if(bot_attack_timeout > 15 && attack_id == 0 && !attacking && !damaged) {
-				bot_attack_timeout = 0;
-				bot_will_continue_combo = irandom_range(0, 1);
-				attacking = true;
-				entity_sprite.image_index = 0;
-				can_move = false;
-				attack_id = 1;
-				audio_play_sound(snd_woosh, 1, false);
-				
-				character_attack_attributes_handler(char_id, attack_id);
-			}
-		} else {
-			bot_attack_timeout = 0;
-		}
-		
-		switch(char_id) {
-			case 0: {
-				switch(attack_id) {
-					case 1: {						
-						if(attacking && bot_will_continue_combo && entity_sprite.image_index > entity_sprite.image_number - 2) {
-							entity_sprite.image_index = 0;
-							attack_id = 2;
-							bot_attack_timeout = 0;
-							character_attack_attributes_handler(char_id, attack_id);
-						
-							audio_play_sound(snd_woosh, 1, false);
-							bot_will_continue_combo = irandom_range(1, 1);
-						}
-						break;
-					}
-					
-					case 2: {						
-						if(attacking && bot_will_continue_combo && entity_sprite.image_index > entity_sprite.image_number - 2) {
-							entity_sprite.image_index = 0;
-							attack_id = 3;
-							bot_attack_timeout = 0;
-							character_attack_attributes_handler(char_id, attack_id);
-						
-							audio_play_sound(snd_big_woosh, 1, false);
-							bot_will_continue_combo = irandom_range(0, 0);
-						}
-						break;
-					}
-				}
-					
-				break;
-			}
-			
-			case 1: {
-				switch(attack_id) {
-					case 1: {						
-						if(attacking && bot_will_continue_combo && entity_sprite.image_index > entity_sprite.image_number - 2) {
-							entity_sprite.image_index = 0;
-							attack_id = 2;
-							bot_attack_timeout = 0;
-							character_attack_attributes_handler(char_id, attack_id);
-						
-							audio_play_sound(snd_woosh, 1, false);
-							bot_will_continue_combo = irandom_range(1, 1);
-						}
-						break;
-					}
-				}
-					
-				break;
-			}
-		}
+		bot_first_attack_handler();
+		bot_combo_handler();
 	}
 	
 	entity_sprite.image_xscale = last_horizontal_direction != 0 ? last_horizontal_direction : entity_sprite.image_xscale;
@@ -356,6 +136,17 @@ if(dead && !global.pause) {
 		if(dead_timeout > 3 && !player_controlled) {
 			instance_destroy(entity_sprite);
 			instance_destroy();
+		} else if(dead_timeout > 3 && player_controlled) {
+			x = irandom_range(0, 480);
+			y = irandom_range(0, 240);
+			dead = false;
+			dead_on_ground = false;
+			dead_timeout = 0;
+			damaged = false;
+			can_move = true;
+			entity_health = entity_max_health;
+			entity_sprite.image_index = 0;
+			entity_sprite.image_speed = 1;
 		}
 	}
 }

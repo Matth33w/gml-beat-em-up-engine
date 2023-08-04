@@ -1,0 +1,1 @@
+sprite_index = spr_mai_ryuenbu_projectile;

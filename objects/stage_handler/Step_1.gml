@@ -20,7 +20,17 @@ if(keyboard_check_pressed(vk_f2)) {
 
 spawn_enemy_timeout += delta_time / 1000000;
 
-if(spawn_enemy_timeout > 5) {
+enemies_on_screen = 0;
+
+for(var i = 0; i < instance_number(obj_entity); i++) {
+	var _entity_instance = instance_find(obj_entity, i);
+	
+	if(!_entity_instance.player_controlled) {
+		enemies_on_screen++;
+	}
+}
+
+if(spawn_enemy_timeout > 5 && enemies_on_screen < 3) {
 	var thing = instance_create_depth(choose(-32, room_width + 32), irandom_range(-32, room_height + 32), 0, obj_entity);
 	thing.player_controlled = false;
 	thing.player_controller_id = 0;
