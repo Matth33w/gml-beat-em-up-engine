@@ -4,8 +4,8 @@ function execute_attack_handler(_char_id, _attack_id){
 	can_move = false;
 	attacking = true;
 	bot_will_continue_combo = !player_controlled ? irandom_range(0, 1) : bot_will_continue_combo;
-	character_attack_attributes_handler(char_id, attack_id);
 	attack_id = _attack_id;
+	character_attack_attributes_handler(char_id, attack_id);
 	
 	switch(_char_id) {
 		case 0: {

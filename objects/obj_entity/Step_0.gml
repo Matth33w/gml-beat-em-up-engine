@@ -113,12 +113,12 @@ if(dead && !global.pause) {
 		x += current_x;
 	}
 		
-	if(y_height <= 0 && !dead_on_ground) {
+	if(y_height <= 0 && !dead_on_ground && y_speed > 0) {
 		if(death_bounces > 0) {
 			death_bounces--;
 			y_speed = -6;
 			y_height = 0;
-			audio_play_sound(snd_step, 1, false);
+			audio_play_sound(snd_impact, 1, false);
 			entity_sprite.image_index = 0;
 			entity_sprite.image_speed = 1;
 		} else {
@@ -127,7 +127,8 @@ if(dead && !global.pause) {
 			y_height = 0;
 			entity_sprite.image_index = 0;
 			entity_sprite.image_speed = 1;
-			audio_play_sound(snd_step, 1, false);
+			death_bounces = bounces_to_die;
+			audio_play_sound(snd_impact, 1, false);
 		}
 	}
 	
